@@ -6,6 +6,8 @@ import dao.UserDao;
 import enums.UserRole;
 import models.user.Regular;
 import models.user.User;
+import passwordhash.HashPassword;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -37,6 +39,21 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
             return Response.ok(user).build();
+        }
+    }
+
+    @POST
+    @Path("/login")
+    @Consumes("application/json")
+    public Response login(JsonObject jsonObject) {
+        String userName = jsonObject.getString("userName");
+        byte[] password = HashPassword.hash(jsonObject.getString("password"));
+
+        boolean loggedIn = userDao.login(userName, password);
+        if (loggedIn) {
+            return Response.ok(Response.Status.ACCEPTED).build();
+        } else {
+            return Response.status(Response.Status.CONFLICT).build();
         }
     }
 

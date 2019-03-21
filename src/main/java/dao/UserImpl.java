@@ -35,7 +35,9 @@ public class UserImpl implements UserDao {
     }
 
     @Override
-    public boolean login(String userName, String password) {
+    public boolean login(String userName, byte[] password) {
+        query = em.createQuery("SELECT user.password FROM User user WHERE user.userName = :userName");
+        query.setParameter("userName", userName);
         return false;
     }
 
