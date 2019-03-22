@@ -1,10 +1,13 @@
 package dao;
 
 import models.user.User;
+import passwordhash.HashPassword;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -35,16 +38,21 @@ public class UserImpl implements UserDao {
     }
 
     @Override
-    public boolean login(String userName, byte[] password) {
-        query = em.createQuery("SELECT user.password FROM User user WHERE user.userName = :userName");
+    public User login(String userName, String password) {
+        query = em.createQuery("SELECT user FROM User user WHERE user.userName = :userName");
         query.setParameter("userName", userName);
-        return false;
+        User u = (User) query.getSingleResult();
+        if(Arrays.equals(u.getPassword(), HashPassword.hash(password, u.getSalt()))) {
+            return u;
+        }
+        return null;
     }
 
     @Override
     public User getUserById(Long id) {
         query = em.createQuery("SELECT user FROM User user WHERE user.id = :id");
         query.setParameter("id", id);
+
         return (User) query.getSingleResult();
     }
 

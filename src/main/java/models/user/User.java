@@ -1,6 +1,7 @@
 package models.user;
 
 import enums.UserRole;
+import javafx.util.Pair;
 import models.post.Post;
 import passwordhash.HashPassword;
 
@@ -24,6 +25,8 @@ public abstract class User {
     private String website;
     private UserRole userRole;
 
+    private byte[] salt;
+
     @ElementCollection
     private List<Long> following = new ArrayList<Long>();
 
@@ -38,7 +41,9 @@ public abstract class User {
         this.bio = bio;
         this.location = location;
         this.profilePicture = profilePicture;
-        this.password = HashPassword.hash(password);
+        Pair pair = HashPassword.hash(password);
+        this.password = (byte[]) pair.getKey();
+        this.salt = (byte[]) pair.getValue();
         this.website = website;
         this.userRole = userRole;
     }
@@ -94,6 +99,10 @@ public abstract class User {
         return this.followers;
     }
 
+    public byte[] getSalt() {
+        return salt;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -115,7 +124,9 @@ public abstract class User {
     }
 
     public void setPassword(String password) {
-        this.password = HashPassword.hash(password);
+        Pair pair = HashPassword.hash(password);
+        this.password = (byte[]) pair.getKey();
+        this.salt = (byte[]) pair.getValue();
     }
 
     public void setWebsite(String website) {
@@ -124,5 +135,9 @@ public abstract class User {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public void setSalt(byte[] salt) {
+        this.salt = salt;
     }
 }

@@ -10,7 +10,7 @@ public interface UserDao {
 
     void removeUser(User user);
 
-    boolean login(String userName, byte[] password);
+    User login(String userName, String password);
 
     User getUserById(Long id);
 

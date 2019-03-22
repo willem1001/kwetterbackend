@@ -1,18 +1,18 @@
 package Controllers;
 
-import com.sun.deploy.net.HttpResponse;
 import dao.PostDao;
 import dao.UserDao;
 import enums.UserRole;
 import models.user.Regular;
 import models.user.User;
-import passwordhash.HashPassword;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Path("/api/user")
@@ -47,11 +47,10 @@ public class UserController {
     @Consumes("application/json")
     public Response login(JsonObject jsonObject) {
         String userName = jsonObject.getString("userName");
-        byte[] password = HashPassword.hash(jsonObject.getString("password"));
-
-        boolean loggedIn = userDao.login(userName, password);
-        if (loggedIn) {
-            return Response.ok(Response.Status.ACCEPTED).build();
+        String password = jsonObject.getString("password");
+        User u = userDao.login(userName, password);
+        if (u != null) {
+            return Response.ok(u).build();
         } else {
             return Response.status(Response.Status.CONFLICT).build();
         }
@@ -85,6 +84,8 @@ public class UserController {
         regular.setWebsite(json.getString("website"));
         regular.setUserRole(UserRole.REGULAR);
         userDao.createUser(regular);
+
         return Response.ok(regular).build();
     }
 }
+
