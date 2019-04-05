@@ -29,6 +29,16 @@ public class PostController {
         return Response.ok(posts).build();
     }
 
+    @GET
+    @Path("/{id}")
+    public Response getUser(@PathParam("id") Long id) {
+        Post post = postDao.getPostById(id);
+        if (post == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(post).build();
+    }
+
     @POST
     @Path("/createTweet")
     public Response createTweetFromUserId(JsonObject json) {
@@ -60,5 +70,13 @@ public class PostController {
         userDao.updateUser(creator);
 
         return Response.ok(comment).build();
+    }
+
+    @GET
+    @Path("/getTimeLine/{id}")
+    @Consumes("application/json")
+    public Response getRelevantPosts(@PathParam("id") Long id) {
+        List<Post> posts = postDao.getTimeLineFromUserId(id);
+        return Response.ok(posts).build();
     }
 }

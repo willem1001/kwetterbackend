@@ -1,3 +1,2 @@
 
-esquid:HiddenFieldCheck"9Rename "query" which hides the field declared at line 13.(ÔÎÏıÿÿÿÿ8½‰¾ş™-
-psquid:S1450"TRemove the "query" field and declare it as a local variable in the relevant methods.(½ÏäÎ8½‰¾ş™-
+Xsquid:UselessImportCheck"-Remove this unused import 'models.post.Post'.(¦ÕÖ‹8¼Ã®¿-

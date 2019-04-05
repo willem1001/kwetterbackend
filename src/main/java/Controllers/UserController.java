@@ -5,14 +5,12 @@ import dao.UserDao;
 import enums.UserRole;
 import models.user.Regular;
 import models.user.User;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Path("/api/user")
@@ -37,9 +35,8 @@ public class UserController {
         User user = userDao.getUserById(id);
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-            return Response.ok(user).build();
         }
+        return Response.ok(user).build();
     }
 
     @POST
@@ -49,11 +46,10 @@ public class UserController {
         String userName = jsonObject.getString("userName");
         String password = jsonObject.getString("password");
         User u = userDao.login(userName, password);
-        if (u != null) {
-            return Response.ok(u).build();
-        } else {
-            return Response.status(Response.Status.CONFLICT).build();
+        if (u == null || !password.equals(u.getPassword())) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
+        return Response.ok(u).build();
     }
 
     @POST

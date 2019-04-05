@@ -1,4 +1,2 @@
 
-Vsquid:S1191"5Use classes from the Java API instead of Sun classes.(¼Ý²çûÿÿÿÿ8µ²Äþ™-
-|squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ü‚ùýúÿÿÿÿ8µ²Äþ™-
-jsquid:UselessImportCheck"<Remove this unused import 'com.sun.deploy.net.HttpResponse'.(¼Ý²çûÿÿÿÿ8µ²Äþ™-
+~squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ü‚ùýúÿÿÿÿ8µ²Äþ™-

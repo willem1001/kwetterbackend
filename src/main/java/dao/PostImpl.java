@@ -1,6 +1,8 @@
 package dao;
 
 import models.post.Post;
+import models.user.User;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +53,13 @@ public class PostImpl implements PostDao {
     public List<Post> getPostsByCreatorId(Long id) {
         query = em.createQuery("SELECT post FROM Post post WHERE post.postCreator = :creatorId");
         query.setParameter("creatorId", id);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Post> getTimeLineFromUserId(Long id) {
+        query = em.createQuery("SELECT post FROM Post post, User user WHERE (post.postCreator IN (SELECT uf FROM user.following uf WHERE user.id = :id)) OR post.postCreator = :id");
+        query.setParameter("id",id);
         return query.getResultList();
     }
 }

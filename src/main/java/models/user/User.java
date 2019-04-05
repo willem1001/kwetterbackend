@@ -1,10 +1,7 @@
 package models.user;
 
 import enums.UserRole;
-import javafx.util.Pair;
 import models.post.Post;
-import passwordhash.HashPassword;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +18,10 @@ public abstract class User {
     private String bio;
     private String location;
     private String profilePicture;
-    private byte[] password;
+    private String password;
     private String website;
     private UserRole userRole;
 
-    private byte[] salt;
 
     @ElementCollection
     private List<Long> following = new ArrayList<Long>();
@@ -41,9 +37,7 @@ public abstract class User {
         this.bio = bio;
         this.location = location;
         this.profilePicture = profilePicture;
-        Pair pair = HashPassword.hash(password);
-        this.password = (byte[]) pair.getKey();
-        this.salt = (byte[]) pair.getValue();
+        this.password = password;
         this.website = website;
         this.userRole = userRole;
     }
@@ -79,7 +73,7 @@ public abstract class User {
         return this.profilePicture;
     }
 
-    public byte[] getPassword() {
+    public String  getPassword() {
         return this.password;
     }
 
@@ -97,10 +91,6 @@ public abstract class User {
 
     public List<Long> getFollowers() {
         return this.followers;
-    }
-
-    public byte[] getSalt() {
-        return salt;
     }
 
     public void setId(Long id) {
@@ -124,9 +114,7 @@ public abstract class User {
     }
 
     public void setPassword(String password) {
-        Pair pair = HashPassword.hash(password);
-        this.password = (byte[]) pair.getKey();
-        this.salt = (byte[]) pair.getValue();
+        this.password = password;
     }
 
     public void setWebsite(String website) {
@@ -137,7 +125,10 @@ public abstract class User {
         this.userRole = userRole;
     }
 
-    public void setSalt(byte[] salt) {
-        this.salt = salt;
+    @Override
+    public boolean equals(Object obj) {
+        User u = (User) obj;
+        if(u == null) return false;
+        return u.getId() == getId();
     }
 }

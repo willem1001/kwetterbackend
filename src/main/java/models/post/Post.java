@@ -59,4 +59,11 @@ public abstract class Post {
     public List<Long> getComments() {
         return this.comments;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Post p = (Post) obj;
+        if(p == null) return false;
+        return p.getId() == getId();
+    }
 }

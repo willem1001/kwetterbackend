@@ -1,13 +1,11 @@
 package dao;
 
+import models.post.Post;
 import models.user.User;
-import passwordhash.HashPassword;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
@@ -42,7 +40,7 @@ public class UserImpl implements UserDao {
         query = em.createQuery("SELECT user FROM User user WHERE user.userName = :userName");
         query.setParameter("userName", userName);
         User u = (User) query.getSingleResult();
-        if(Arrays.equals(u.getPassword(), HashPassword.hash(password, u.getSalt()))) {
+        if(u.getUserName().equals(userName) && u.getPassword().equals(password)) {
             return u;
         }
         return null;
@@ -57,8 +55,15 @@ public class UserImpl implements UserDao {
     }
 
     @Override
+    public List<User> getFollowers(Long id) {
+        query = em.createQuery("SELECT user FROM User user WHERE user.following IN (SELECT uf FROM user.following uf)AND user.id = :id");
+        query.setParameter("id", id);
+        return query.getResultList();
+    }
+
+    @Override
     public List<User> getAllUsers() {
-        Query query = em.createQuery("SELECT user FROM User user");
+        query = em.createQuery("SELECT user FROM User user");
         return query.getResultList();
     }
 }
