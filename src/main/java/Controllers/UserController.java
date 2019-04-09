@@ -1,5 +1,7 @@
 package Controllers;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import dao.PostDao;
 import dao.UserDao;
 import enums.UserRole;
@@ -49,7 +51,20 @@ public class UserController {
         if (u == null || !password.equals(u.getPassword())) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        String token = Hashing.sha512().hashString(userName + System.currentTimeMillis(), Charsets.UTF_8).toString();
+        u.setToken(token);
+        userDao.updateUser(u);
         return Response.ok(u).build();
+    }
+
+    @POST
+    @Path("/logout")
+    @Consumes("application/json")
+    public Response logout(JsonObject json) {
+        User user = userDao.getUserById((long) json.getInt("id"));
+        user.setToken("");
+        userDao.updateUser(user);
+        return Response.ok().build();
     }
 
     @POST
@@ -60,7 +75,6 @@ public class UserController {
         User following = userDao.getUserById(Long.parseLong(json.getString("followingId")));
 
         follower.followUser(following);
-
         userDao.updateUser(follower);
         userDao.updateUser(following);
 

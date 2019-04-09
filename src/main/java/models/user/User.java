@@ -2,6 +2,7 @@ package models.user;
 
 import enums.UserRole;
 import models.post.Post;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,8 @@ public abstract class User {
     private String profilePicture;
     private String password;
     private String website;
+    private String token;
     private UserRole userRole;
-
 
     @ElementCollection
     private List<Long> following = new ArrayList<Long>();
@@ -42,7 +43,8 @@ public abstract class User {
         this.userRole = userRole;
     }
 
-    public User() {}
+    public User() {
+    }
 
     public void followUser(User user) {
         this.following.add(user.id);
@@ -73,12 +75,16 @@ public abstract class User {
         return this.profilePicture;
     }
 
-    public String  getPassword() {
+    public String getPassword() {
         return this.password;
     }
 
     public String getWebsite() {
         return this.website;
+    }
+
+    public String getToken() {
+        return this.token;
     }
 
     public UserRole getUserRole() {
@@ -121,14 +127,19 @@ public abstract class User {
         this.website = website;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
 
+
     @Override
     public boolean equals(Object obj) {
         User u = (User) obj;
-        if(u == null) return false;
+        if (u == null) return false;
         return u.getId() == getId();
     }
 }

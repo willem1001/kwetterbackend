@@ -17,4 +17,6 @@ public interface UserDao {
     List<User> getFollowers(Long id);
 
     List<User> getAllUsers();
+
+    boolean checkToken(Long id, String token);
 }

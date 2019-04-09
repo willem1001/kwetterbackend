@@ -1,6 +1,5 @@
 package dao;
 
-import models.post.Post;
 import models.user.User;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -65,5 +64,13 @@ public class UserImpl implements UserDao {
     public List<User> getAllUsers() {
         query = em.createQuery("SELECT user FROM User user");
         return query.getResultList();
+    }
+
+    @Override
+    public boolean checkToken(Long id, String token) {
+        query = em.createQuery("SELECT user.token FROM User user WHERE user.id = :id");
+        query.setParameter("id", id);
+        String userToken = query.getSingleResult().toString();
+        return userToken.equals(token);
     }
 }
