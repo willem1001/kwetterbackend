@@ -44,9 +44,9 @@ public class UserController {
     @POST
     @Path("/login")
     @Consumes("application/json")
-    public Response login(JsonObject jsonObject) {
-        String userName = jsonObject.getString("userName");
-        String password = jsonObject.getString("password");
+    public Response login(JsonObject json) {
+        String userName = json.getString("userName");
+        String password = json.getString("password");
         User u = userDao.login(userName, password);
         if (u == null || !password.equals(u.getPassword())) {
             return Response.status(Response.Status.NOT_FOUND).build();

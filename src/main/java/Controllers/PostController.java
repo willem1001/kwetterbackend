@@ -6,6 +6,7 @@ import models.post.Comment;
 import models.post.Post;
 import models.post.Tweet;
 import models.user.User;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -41,8 +42,8 @@ public class PostController {
 
     @POST
     @Path("/createTweet")
-    public Response createTweetFromUserId(JsonObject json) {
-        User user = userDao.getUserById(Long.parseLong(json.getString("creatorId")));
+    public Response createTweet(JsonObject json) {
+        User user = userDao.getUserById((long) json.getInt("id"));
         String content = json.getString("content");
 
         Tweet tweet = new Tweet(content, user);
@@ -53,12 +54,12 @@ public class PostController {
     }
 
     @POST
-    @Path("/createReaction")
+    @Path("/createComment")
     @Consumes("application/json")
     public Response createResponse(JsonObject json) {
         String content = json.getString("content");
-        User creator = userDao.getUserById(Long.parseLong(json.getString("creatorId")));
-        Post parent = postDao.getPostById(Long.parseLong(json.getString("parentId")));
+        User creator = userDao.getUserById((long) json.getInt("id"));
+        Post parent = postDao.getPostById((long) json.getInt("parentId"));
 
         Comment comment = new Comment(content, creator, parent);
         postDao.createPost(comment);
@@ -75,8 +76,12 @@ public class PostController {
     @GET
     @Path("/getTimeLine/{id}")
     @Consumes("application/json")
-    public Response getRelevantPosts(@PathParam("id") Long id) {
-        List<Post> posts = postDao.getTimeLineFromUserId(id);
-        return Response.ok(posts).build();
+    public Response getRelevantPosts(@HeaderParam("Authorization") String token, @PathParam("id") Long id) {
+        if (userDao.checkToken(id, token)) {
+            List<Post> posts = postDao.getTimeLineFromUserId(id);
+            return Response.ok(posts).build();
+        } else {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
     }
 }

@@ -7,7 +7,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("Tweet")
+@DiscriminatorValue("Comment")
 public class Comment extends Post {
 
     private Long parentPost;
