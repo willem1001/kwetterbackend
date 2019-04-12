@@ -1,4 +1,4 @@
 
-=squid:S2097@"Add a type test to this method.(ç‹—„8¨ñ∫„û-
 wsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(Ì·õß8ÄÛπ„û-
 nsquid:S1206@"PThis class overrides "equals()" and should therefore also override "hashCode()".(ç‹—„8¨ñ∫„û-
+=squid:S2097@"Add a type test to this method.(ç‹—„8¨ñ∫„û-

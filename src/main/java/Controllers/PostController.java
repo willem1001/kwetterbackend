@@ -1,17 +1,22 @@
 package Controllers;
 
+import com.google.gson.Gson;
 import dao.PostDao;
 import dao.UserDao;
 import models.post.Comment;
 import models.post.Post;
 import models.post.Tweet;
 import models.user.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/api/post")
@@ -77,9 +82,41 @@ public class PostController {
     @Path("/getTimeLine/{id}")
     @Consumes("application/json")
     public Response getRelevantPosts(@HeaderParam("Authorization") String token, @PathParam("id") Long id) {
+
+        Gson gson = new Gson();
+
         if (userDao.checkToken(id, token)) {
             List<Post> posts = postDao.getTimeLineFromUserId(id);
-            return Response.ok(posts).build();
+            List<String> tweetsJson = new ArrayList<>();
+
+            for (Post tweet : posts) {
+
+                List<Post> comments = postDao.getCommentsFromParentId(tweet.getId());
+                List<JSONObject> commentsJson = new ArrayList<>();
+
+                for (Post comment : comments) {
+                    User commentCreator = userDao.getUserById(comment.getPostCreator());
+                    JSONObject commentJson = new JSONObject()
+                            .put("commentId", comment.getId())
+                            .put("commentCreator", new JSONObject()
+                                    .put("creatorName", commentCreator.getUserName())
+                                    .put("creatorId", commentCreator.getId()))
+                            .put("commentContent", comment.getContent())
+                            .put("commentDate", comment.getCreationDate());
+                    commentsJson.add(commentJson);
+                }
+
+                User tweetCreator = userDao.getUserById(tweet.getPostCreator());
+                JSONObject tweetJson = new JSONObject()
+                        .put("tweetId", tweet.getId())
+                        .put("tweetContent", tweet.getContent())
+                        .put("tweetDate", tweet.getCreationDate())
+                        .put("tweetCreator", gson.toJson(tweetCreator))
+                        .put("comments", commentsJson);
+                tweetsJson.add(tweetJson.toString());
+            }
+
+            return Response.ok(tweetsJson).build();
         } else {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }

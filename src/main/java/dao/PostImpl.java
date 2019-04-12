@@ -1,12 +1,12 @@
 package dao;
 
+import enums.PostType;
 import models.post.Post;
-import models.user.User;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
@@ -58,8 +58,15 @@ public class PostImpl implements PostDao {
 
     @Override
     public List<Post> getTimeLineFromUserId(Long id) {
-        query = em.createQuery("SELECT post FROM Post post, User user WHERE (post.postCreator IN (SELECT uf FROM user.following uf WHERE user.id = :id)) OR post.postCreator = :id");
+        query = em.createQuery("SELECT tweet FROM Tweet tweet, User user WHERE((tweet.postCreator IN (SELECT uf FROM user.following uf WHERE user.id = :id)) OR tweet.postCreator = :id)");
         query.setParameter("id",id);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Post> getCommentsFromParentId(Long id) {
+        query = em.createQuery("SELECT comment FROM Comment comment WHERE comment.parentPost = :id");
+        query.setParameter("id", id);
         return query.getResultList();
     }
 }

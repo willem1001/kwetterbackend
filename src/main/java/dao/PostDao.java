@@ -17,4 +17,6 @@ public interface PostDao {
     List<Post> getPostsByCreatorId(Long id);
 
     List<Post> getTimeLineFromUserId(Long id);
+
+    List<Post> getCommentsFromParentId(Long id);
 }
