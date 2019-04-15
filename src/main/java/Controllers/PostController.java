@@ -7,12 +7,9 @@ import models.post.Comment;
 import models.post.Post;
 import models.post.Tweet;
 import models.user.User;
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -30,14 +27,24 @@ public class PostController {
     UserDao userDao;
 
     @GET
-    public Response getAllPosts() {
+    public Response getAllPosts(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         List<Post> posts = postDao.getAllPosts();
         return Response.ok(posts).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response getUser(@PathParam("id") Long id) {
+    public Response getUser(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         Post post = postDao.getPostById(id);
         if (post == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -46,8 +53,14 @@ public class PostController {
     }
 
     @POST
+    @Consumes("application/json")
     @Path("/createTweet")
-    public Response createTweet(JsonObject json) {
+    public Response createTweet(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, JsonObject json) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         User user = userDao.getUserById((long) json.getInt("id"));
         String content = json.getString("content");
 
@@ -61,7 +74,12 @@ public class PostController {
     @POST
     @Path("/createComment")
     @Consumes("application/json")
-    public Response createResponse(JsonObject json) {
+    public Response createResponse(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, JsonObject json) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         String content = json.getString("content");
         User creator = userDao.getUserById((long) json.getInt("id"));
         Post parent = postDao.getPostById((long) json.getInt("parentId"));
@@ -81,44 +99,42 @@ public class PostController {
     @GET
     @Path("/getTimeLine/{id}")
     @Consumes("application/json")
-    public Response getRelevantPosts(@HeaderParam("Authorization") String token, @PathParam("id") Long id) {
+    public Response getRelevantPosts(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
 
         Gson gson = new Gson();
 
-        if (userDao.checkToken(id, token)) {
-            List<Post> posts = postDao.getTimeLineFromUserId(id);
-            List<String> tweetsJson = new ArrayList<>();
-
-            for (Post tweet : posts) {
-
-                List<Post> comments = postDao.getCommentsFromParentId(tweet.getId());
-                List<JSONObject> commentsJson = new ArrayList<>();
-
-                for (Post comment : comments) {
-                    User commentCreator = userDao.getUserById(comment.getPostCreator());
-                    JSONObject commentJson = new JSONObject()
-                            .put("commentId", comment.getId())
-                            .put("commentCreator", new JSONObject()
-                                    .put("creatorName", commentCreator.getUserName())
-                                    .put("creatorId", commentCreator.getId()))
-                            .put("commentContent", comment.getContent())
-                            .put("commentDate", comment.getCreationDate());
-                    commentsJson.add(commentJson);
-                }
-
-                User tweetCreator = userDao.getUserById(tweet.getPostCreator());
-                JSONObject tweetJson = new JSONObject()
-                        .put("tweetId", tweet.getId())
-                        .put("tweetContent", tweet.getContent())
-                        .put("tweetDate", tweet.getCreationDate())
-                        .put("tweetCreator", gson.toJson(tweetCreator))
-                        .put("comments", commentsJson);
-                tweetsJson.add(tweetJson.toString());
-            }
-
-            return Response.ok(tweetsJson).build();
-        } else {
+        if (!userDao.checkToken(authorizationId, token)) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
+        List<Post> posts = postDao.getTimeLineFromUserId(id);
+        List<String> tweetsJson = new ArrayList<>();
+
+        for (Post tweet : posts) {
+            List<Post> comments = postDao.getCommentsFromParentId(tweet.getId());
+            List<JSONObject> commentsJson = new ArrayList<>();
+
+            for (Post comment : comments) {
+                User commentCreator = userDao.getUserById(comment.getPostCreator());
+                JSONObject commentJson = new JSONObject()
+                        .put("commentId", comment.getId())
+                        .put("commentCreator", new JSONObject()
+                                .put("creatorName", commentCreator.getUserName())
+                                .put("creatorId", commentCreator.getId()))
+                        .put("commentContent", comment.getContent())
+                        .put("commentDate", comment.getCreationDate());
+                commentsJson.add(commentJson);
+            }
+
+            User tweetCreator = userDao.getUserById(tweet.getPostCreator());
+            JSONObject tweetJson = new JSONObject()
+                    .put("tweetId", tweet.getId())
+                    .put("tweetContent", tweet.getContent())
+                    .put("tweetDate", tweet.getCreationDate())
+                    .put("tweetCreator", gson.toJson(tweetCreator))
+                    .put("comments", commentsJson);
+            tweetsJson.add(tweetJson.toString());
+        }
+
+        return Response.ok(tweetsJson).build();
     }
 }

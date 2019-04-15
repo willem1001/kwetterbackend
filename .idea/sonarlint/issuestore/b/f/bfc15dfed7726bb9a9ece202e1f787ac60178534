@@ -1,5 +1,2 @@
 
 ~squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ü‚ùıúÿÿÿÿ8ˆãÙ—-
-_squid:UselessImportCheck
-"/Remove this unused import 'org.json.JSONArray'.(¬¸Ê’üÿÿÿÿ8Ğş‰‡¡-
-\squid:UselessImportCheck",Remove this unused import 'javax.json.Json'.(™³Æçşÿÿÿÿ8Éïª‡¡-

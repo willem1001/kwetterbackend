@@ -2,6 +2,7 @@ package Controllers;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import com.google.gson.Gson;
 import dao.PostDao;
 import dao.UserDao;
 import enums.UserRole;
@@ -26,14 +27,24 @@ public class UserController {
     private PostDao postDao;
 
     @GET
-    public Response getAllUsers() {
+    public Response getAllUsers(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         List<User> users = userDao.getAllUsers();
         return Response.ok(users).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response getUser(@PathParam("id") Long id) {
+    public Response getUser(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         User user = userDao.getUserById(id);
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -60,7 +71,12 @@ public class UserController {
     @POST
     @Path("/logout")
     @Consumes("application/json")
-    public Response logout(JsonObject json) {
+    public Response logout(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, JsonObject json) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
         User user = userDao.getUserById((long) json.getInt("id"));
         user.setToken("");
         userDao.updateUser(user);
@@ -70,9 +86,14 @@ public class UserController {
     @POST
     @Path("/follow")
     @Consumes("application/json")
-    public Response followUser(JsonObject json) {
-        User follower = userDao.getUserById(Long.parseLong(json.getString("followerId")));
-        User following = userDao.getUserById(Long.parseLong(json.getString("followingId")));
+    public Response followUser(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, JsonObject json) {
+
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        User follower = userDao.getUserById((long) json.getInt("followerId"));
+        User following = userDao.getUserById((long) json.getInt("followingId"));
 
         follower.followUser(following);
         userDao.updateUser(follower);
@@ -85,16 +106,9 @@ public class UserController {
     @Path("/create")
     @Consumes("application/json")
     public Response createUser(JsonObject json) {
-        Regular regular = new Regular();
-        regular.setUserName(json.getString("userName"));
-        regular.setBio(json.getString("bio"));
-        regular.setLocation(json.getString("location"));
-        regular.setPassword(json.getString("password"));
-        regular.setProfilePicture(json.getString("profilePicture"));
-        regular.setWebsite(json.getString("website"));
+        Regular regular =  new Gson().fromJson(json.toString(), Regular.class);
         regular.setUserRole(UserRole.REGULAR);
         userDao.createUser(regular);
-
         return Response.ok(regular).build();
     }
 }
