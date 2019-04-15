@@ -95,11 +95,16 @@ public class UserController {
         User follower = userDao.getUserById((long) json.getInt("followerId"));
         User following = userDao.getUserById((long) json.getInt("followingId"));
 
+        if(follower.getFollowing().contains(following.getId())) {
+            follower.unfollowUser(following);
+            return Response.ok().build();
+        }
+
         follower.followUser(following);
         userDao.updateUser(follower);
         userDao.updateUser(following);
 
-        return Response.ok(follower).build();
+        return Response.ok(following).build();
     }
 
     @POST
@@ -110,6 +115,40 @@ public class UserController {
         regular.setUserRole(UserRole.REGULAR);
         userDao.createUser(regular);
         return Response.ok(regular).build();
+    }
+
+    @GET
+    @Path("/searchUsers/{query}")
+    @Consumes("application/json")
+    public Response searchUsers(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("query") String query) {
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+
+        List<User> foundUsers = userDao.searchUsers(query);
+        return Response.ok(foundUsers).build();
+    }
+
+    @GET
+    @Path("/getAllFollowers/{id}")
+    @Consumes("application/json")
+    public Response getAllFollowers(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+        List<User> following = userDao.getFollowers(id);
+        return Response.ok(following).build();
+    }
+
+    @GET
+    @Path("/getAllFollowing/{id}")
+    @Consumes("application/json")
+    public Response getAllFollowing(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
+        if (!userDao.checkToken(authorizationId, token)) {
+            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        }
+        List<User> following = userDao.getFollowing(id);
+        return Response.ok(following).build();
     }
 }
 

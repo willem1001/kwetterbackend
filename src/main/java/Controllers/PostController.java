@@ -8,6 +8,7 @@ import models.post.Post;
 import models.post.Tweet;
 import models.user.User;
 import org.json.JSONObject;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -130,7 +131,9 @@ public class PostController {
                     .put("tweetId", tweet.getId())
                     .put("tweetContent", tweet.getContent())
                     .put("tweetDate", tweet.getCreationDate())
-                    .put("tweetCreator", gson.toJson(tweetCreator))
+                    .put("tweetCreator", new JSONObject()
+                            .put("creatorName", tweetCreator.getUserName())
+                            .put("creatorId", tweetCreator.getId()))
                     .put("comments", commentsJson);
             tweetsJson.add(tweetJson.toString());
         }

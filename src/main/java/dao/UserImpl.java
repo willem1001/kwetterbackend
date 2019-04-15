@@ -55,8 +55,25 @@ public class UserImpl implements UserDao {
 
     @Override
     public List<User> getFollowers(Long id) {
-        query = em.createQuery("SELECT user FROM User user WHERE user.following IN (SELECT uf FROM user.following uf)AND user.id = :id");
+        query = em.createQuery("SELECT user.followers FROM User user WHERE user.id = :id");
         query.setParameter("id", id);
+
+        List followersIds =  query.getResultList();
+
+        query = em.createQuery("SELECT user FROM User user WHERE user.id IN :followingIds");
+        query.setParameter("followingIds", followersIds);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<User> getFollowing(Long id) {
+        query = em.createQuery("SELECT user.following FROM User user WHERE user.id = :id");
+        query.setParameter("id", id);
+
+        List followingIds =  query.getResultList();
+
+        query = em.createQuery("SELECT user FROM User user WHERE user.id IN :followingIds");
+        query.setParameter("followingIds", followingIds);
         return query.getResultList();
     }
 
@@ -72,5 +89,12 @@ public class UserImpl implements UserDao {
         query.setParameter("id", id);
         String userToken = query.getSingleResult().toString();
         return userToken.equals(token);
+    }
+
+    @Override
+    public List<User> searchUsers(String searchQuery) {
+        query = em.createQuery("SELECT user FROM User user WHERE user.userName LIKE :searchQuery");
+        query.setParameter("searchQuery", "%" + searchQuery + "%");
+        return query.getResultList();
     }
 }

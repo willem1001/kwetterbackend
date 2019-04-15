@@ -24,10 +24,10 @@ public abstract class User {
     private String token;
     private UserRole userRole;
 
-    @ElementCollection
+    @ElementCollection @Column(unique = true)
     private List<Long> following = new ArrayList<Long>();
 
-    @ElementCollection
+    @ElementCollection @Column(unique = true)
     private List<Long> followers = new ArrayList<Long>();
 
     @ElementCollection
@@ -49,6 +49,11 @@ public abstract class User {
     public void followUser(User user) {
         this.following.add(user.id);
         user.followers.add(this.id);
+    }
+
+    public void unfollowUser(User user) {
+        this.following.remove(user.getId());
+        user.followers.remove(this.id);
     }
 
     public void addPost(Post post) {
