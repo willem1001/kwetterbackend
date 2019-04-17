@@ -5,6 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationScoped
@@ -22,6 +23,7 @@ public class UserImpl implements UserDao {
         return user;
     }
 
+    @Transactional
     @Override
     public User updateUser(User user) {
         em.merge(user);
@@ -29,6 +31,7 @@ public class UserImpl implements UserDao {
         return user;
     }
 
+    @Transactional
     @Override
     public void removeUser(User user) {
         em.remove(user);
@@ -49,6 +52,14 @@ public class UserImpl implements UserDao {
     public User getUserById(Long id) {
         query = em.createQuery("SELECT user FROM User user WHERE user.id = :id");
         query.setParameter("id", id);
+
+        return (User) query.getSingleResult();
+    }
+
+    @Override
+    public User getUserByUserName(String userName) {
+        query = em.createQuery("SELECT user FROM User user WHERE user.userName = :userName");
+        query.setParameter("userName", userName);
 
         return (User) query.getSingleResult();
     }

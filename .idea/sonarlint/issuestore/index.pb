@@ -31,13 +31,21 @@ S
 #src/main/java/models/user/User.java,f\2\f2d51382bbe52ce4d68a02f6a57ab672170f155a
 Q
 !src/main/java/enums/UserRole.java,b\7\b757a3459eb564b81ea902350d8d04bdb62ad589
-=
-web/index.jsp,9\f\9f198ed450f32e45b10ec3c2b1406e609b4a96cd
 7
 pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 8
 oioi.iml,5\e\5ea1c9e09c56dc6c8e39a7d486661e80566528b5
-G
-web/WEB-INF/login.xhtml,6\f\6f993b755aa0d6dd9f76bbbb4ca2c708d0b0f240
 T
 $src/main/java/config/CorsHeader.java,5\1\51fd8005680d4a5d6d0e2a557951bfdc52df371d
+L
+web/WEB-INF/faces-config.xml,9\9\99b16d0fbf6b6cc43bc74c21b6854812f1b56330
+9
+	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+C
+web/adminpage.xhtml,e\7\e7165b6c2502552ba3d3f170f2be33e73de19bbd
+?
+web/index.xhtml,2\2\2213a10824bbea9f4859a4feadc72aabfbc2f80f
+P
+ src/main/java/jsf/LoginBean.java,0\e\0edbbfe56eb9a39197b560def8711698411cc183
+P
+ src/main/java/jsf/AdminBean.java,6\0\600034d33c5b14da758e997075493b209c804c33

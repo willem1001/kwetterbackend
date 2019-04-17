@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +32,13 @@ public class PostImpl implements PostDao {
         return post;
     }
 
+    @Transactional
     @Override
     public void removePost(Post post) {
-        em.remove(post);
+        Post p = em.merge(post);
+        em.remove(p);
     }
+
 
     @Override
     public List<Post> getAllPosts() {

@@ -14,6 +14,8 @@ public interface UserDao {
 
     User getUserById(Long id);
 
+    User getUserByUserName(String userName);
+
     List<User> getFollowers(Long id);
 
     List<User> getFollowing(Long id);
