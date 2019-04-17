@@ -4,7 +4,50 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <f:view>
     <h:body>
-        hoi
+        <h:body>
+            <h1> Admin Panel </h1>
+
+            ${adminBean.init()}
+            <p>Logged in as: <h:outputText value="#{loginBean.currentUser.userName}"/></p>
+
+            <h:form>
+                <div id="userList">
+                    <table>
+                        <tr>
+                            <th> Id </th>
+                            <th> Username</th>
+                            <th> Role</th>
+                        </tr>
+                        <ui:repeat value="#{adminBean.allUsers}" var="user">
+                            <tr>
+                                <td> #{user.id} </td>
+                                <td> #{user.userName} </td>
+                                <td> #{user.userRole} </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+                </div>
+
+                <div>
+                    <h2> Delete Twat </h2>
+                    <label> Twat Id: </label>
+                    <h:inputText value="${adminBean.postId}"/>
+                    <h:commandButton value="Delete Twat" action="${adminBean.deleteTweetById()}"/>
+                </div>
+
+                <div>
+                    <h2> Assign role to User </h2>
+                    <label> Username: </label>
+                    <h:inputText value="${adminBean.userName}"/>
+                    <h:selectOneMenu value="#{adminBean.userRole}">
+                        <f:selectItem itemValue="REGULAR" itemLabel="Regular"/>
+                        <f:selectItem itemValue="MODERATOR" itemLabel="Moderator"/>
+                    </h:selectOneMenu>
+                    <h:commandButton value="Assign Role" action="${adminBean.changeUserRole()}"/>
+                </div>
+            </h:form>
+        </h:body>
+
     </h:body>
 </f:view>
 </html>

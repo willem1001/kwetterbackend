@@ -1,16 +1,21 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Willem
-  Date: 13/03/2019
-  Time: 15:00
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-  <head>
-    <title>$Title$</title>
-  </head>
-  <body>
-  $END$
-  </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+  <h:body>
+    <h1> Admin Panel Login </h1>
+
+    <h:form>
+      <p> Username : <h:inputText value="${loginBean.userName}"/> </p>
+      <p> Password : <h:inputSecret value="${loginBean.password}"/> </p>
+
+      <h:commandButton value="Login" action="${loginBean.login()}"/>
+      <div>
+        <h:outputLabel value="${loginBean}"/>
+      </div>
+    </h:form>
+  </h:body>
+
+</f:view>
 </html>
