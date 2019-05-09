@@ -101,9 +101,6 @@ public class PostController {
     @Path("/getTimeLine/{id}")
     @Consumes("application/json")
     public Response getRelevantPosts(@HeaderParam("Authorization") String token, @HeaderParam("AuthorizationId") Long authorizationId, @PathParam("id") Long id) {
-
-        Gson gson = new Gson();
-
         if (!userDao.checkToken(authorizationId, token)) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }

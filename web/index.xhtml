@@ -3,19 +3,16 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <f:view>
-  <h:body>
-    <h1> Admin Panel Login </h1>
+    <h:body>
+        <h1> Admin Panel Login </h1>
 
-    <h:form>
-      <p> Username : <h:inputText value="${loginBean.userName}"/> </p>
-      <p> Password : <h:inputSecret value="${loginBean.password}"/> </p>
+        <h:form>
+            <p> Username : <h:inputText value="${loginBean.userName}"/></p>
+            <p> Password : <h:inputSecret value="${loginBean.password}"/></p>
 
-      <h:commandButton value="Login" action="${loginBean.login()}"/>
-      <div>
-        <h:outputLabel value="${loginBean}"/>
-      </div>
-    </h:form>
-  </h:body>
+            <h:commandButton value="Login" action="${loginBean.login()}"/>
+        </h:form>
+    </h:body>
 
 </f:view>
 </html>

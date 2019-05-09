@@ -62,8 +62,8 @@ public class PostImpl implements PostDao {
 
     @Override
     public List<Post> getTimeLineFromUserId(Long id) {
-        query = em.createQuery("SELECT tweet FROM Tweet tweet, User user WHERE((tweet.postCreator IN (SELECT uf FROM user.following uf WHERE user.id = :id)) OR tweet.postCreator = :id)");
-        query.setParameter("id",id);
+        query = em.createQuery("SELECT DISTINCT tweet FROM Tweet tweet, User user WHERE(tweet.postCreator IN (SELECT uf FROM user.following uf WHERE user.id = :id) OR tweet.postCreator = :id)");
+        query.setParameter("id", id);
         return query.getResultList();
     }
 

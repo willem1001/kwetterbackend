@@ -111,7 +111,7 @@ public class UserController {
     @Path("/create")
     @Consumes("application/json")
     public Response createUser(JsonObject json) {
-        Regular regular =  new Gson().fromJson(json.toString(), Regular.class);
+        Regular regular = new Gson().fromJson(json.toString(), Regular.class);
         regular.setUserRole(UserRole.REGULAR);
         userDao.createUser(regular);
         return Response.ok(regular).build();

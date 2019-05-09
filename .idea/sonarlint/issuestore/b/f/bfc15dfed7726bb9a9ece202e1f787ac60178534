@@ -1,4 +1,3 @@
 
-Esquid:S1481")Remove this unused "gson" local variable.(şëŒ8…êÜƒ¢-
-Tsquid:S1854"8Remove this useless assignment to local variable "gson".(şëŒ8…êÜƒ¢-
-|squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ü‚ùıúÿÿÿÿ8ˆãÙ—-
+~squid:S00120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ü‚ùıúÿÿÿÿ8ˆãÙ—-
+\squid:UselessImportCheck"1Remove this unused import 'com.google.gson.Gson'.(–§8ÊßÆß¢-
