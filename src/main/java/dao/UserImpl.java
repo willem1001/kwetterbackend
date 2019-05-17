@@ -65,6 +65,13 @@ public class UserImpl implements UserDao {
     }
 
     @Override
+    public User getUserByActivationToken(String activationToken) {
+        query = em.createQuery("SELECT user FROM User user WHERE user.activationToken = :activationToken");
+        query.setParameter("activationToken", activationToken);
+        return (User) query.getSingleResult();
+    }
+
+    @Override
     public List<User> getFollowers(Long id) {
         query = em.createQuery("SELECT user.followers FROM User user WHERE user.id = :id");
         query.setParameter("id", id);

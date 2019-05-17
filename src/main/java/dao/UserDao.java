@@ -16,6 +16,8 @@ public interface UserDao {
 
     User getUserByUserName(String userName);
 
+    User getUserByActivationToken(String activationToken);
+
     List<User> getFollowers(Long id);
 
     List<User> getFollowing(Long id);

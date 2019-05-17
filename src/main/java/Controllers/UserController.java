@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import dao.PostDao;
 import dao.UserDao;
 import enums.UserRole;
+import mail.Mail;
 import models.user.Regular;
 import models.user.User;
 
@@ -59,13 +60,17 @@ public class UserController {
         String userName = json.getString("userName");
         String password = json.getString("password");
         User u = userDao.login(userName, password);
-        if (u == null || !password.equals(u.getPassword())) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+
+        if (u.getActivated()) {
+            if (!password.equals(u.getPassword())) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            String token = Hashing.sha512().hashString(userName + System.currentTimeMillis(), Charsets.UTF_8).toString();
+            u.setToken(token);
+            userDao.updateUser(u);
+            return Response.ok(u).build();
         }
-        String token = Hashing.sha512().hashString(userName + System.currentTimeMillis(), Charsets.UTF_8).toString();
-        u.setToken(token);
-        userDao.updateUser(u);
-        return Response.ok(u).build();
+        return Response.ok("not activated").build();
     }
 
     @POST
@@ -95,7 +100,7 @@ public class UserController {
         User follower = userDao.getUserById((long) json.getInt("followerId"));
         User following = userDao.getUserById((long) json.getInt("followingId"));
 
-        if(follower.getFollowing().contains(following.getId())) {
+        if (follower.getFollowing().contains(following.getId())) {
             follower.unfollowUser(following);
             return Response.ok().build();
         }
@@ -113,8 +118,23 @@ public class UserController {
     public Response createUser(JsonObject json) {
         Regular regular = new Gson().fromJson(json.toString(), Regular.class);
         regular.setUserRole(UserRole.REGULAR);
+
+        String activationToken = Hashing.sha512().hashString((Math.random() + "" + System.currentTimeMillis()), Charsets.UTF_8).toString();
+        regular.setActivationToken(activationToken);
+
         userDao.createUser(regular);
+        Mail.sendMail(regular);
         return Response.ok(regular).build();
+    }
+
+    @POST
+    @Path("/activate")
+    @Consumes("application/json")
+    public Response activateUser(JsonObject json) {
+        User user = userDao.getUserByActivationToken(json.getString("activationToken"));
+        user.activateUser();
+        userDao.updateUser(user);
+        return Response.ok(Response.Status.ACCEPTED).build();
     }
 
     @GET

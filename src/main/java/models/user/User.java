@@ -16,6 +16,7 @@ public abstract class User {
     private Long id;
     @Column(unique = true)
     private String userName;
+    private String mailAddress;
     private String bio;
     private String location;
     private String profilePicture;
@@ -23,6 +24,8 @@ public abstract class User {
     private String website;
     private String token;
     private UserRole userRole;
+    private String activationToken;
+    private Boolean activated;
 
     @ElementCollection @Column(unique = true)
     private List<Long> following = new ArrayList<Long>();
@@ -33,14 +36,16 @@ public abstract class User {
     @ElementCollection
     private List<Long> createdPosts = new ArrayList<Long>();
 
-    public User(String userName, String bio, String location, String profilePicture, String password, String website, UserRole userRole) {
+    public User(String userName, String mailAddress, String bio, String location, String profilePicture, String password, String website, UserRole userRole) {
         this.userName = userName;
+        this.mailAddress = mailAddress;
         this.bio = bio;
         this.location = location;
         this.profilePicture = profilePicture;
         this.password = password;
         this.website = website;
         this.userRole = userRole;
+        this.activated = false;
     }
 
     public User() {
@@ -54,6 +59,11 @@ public abstract class User {
     public void unfollowUser(User user) {
         this.following.remove(user.getId());
         user.followers.remove(this.id);
+    }
+
+    public void activateUser() {
+        this.activationToken = null;
+        this.activated = true;
     }
 
     public void addPost(Post post) {
@@ -138,6 +148,24 @@ public abstract class User {
 
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public String getMailAddress() { return this.mailAddress; }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
+    }
+
+    public Boolean getActivated() {
+        return activated;
+    }
+
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
     }
 
 
